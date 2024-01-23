@@ -1,20 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React from "react";
+import { TouchableOpacity, Text, StyleSheet } from "react-native";
 
-export default function App() {
+import ChatScreen from "./components/ChatScreen";
+import LoginScreen from "./components/LoginScreen";
+import RegisterScreen from "./components/RegisterScreen";
+import "react-native-url-polyfill/auto";
+import HomeScreen from "./components/HomeScreen";
+import LocationScreen from "./components/LocationScreen";
+
+const Stack = createStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={({ navigation }) => ({
+            title: "Home",
+            headerRight: () => (
+              <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={() => {
+                  // Perform logout actions here
+                  // For example, navigate to the "Login" screen
+                  navigation.navigate("Login");
+                }}
+              >
+                <Text style={styles.logoutText}>Logout</Text>
+              </TouchableOpacity>
+            ),
+          })}
+        />
+        <Stack.Screen name="iRememberBot" component={ChatScreen} />
+        <Stack.Screen name="GPSLocation" component={LocationScreen} />
+        {/* Add more screens if needed */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+  logoutButton: {
+    marginRight: 10, // Move the button to the right side
+  },
+  logoutText: {
+    color: "red",
+    fontSize: 16,
   },
 });
+
+export default App;
