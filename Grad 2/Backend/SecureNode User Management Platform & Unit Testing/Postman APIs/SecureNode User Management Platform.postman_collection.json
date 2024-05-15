@@ -1,0 +1,121 @@
+{
+	"info": {
+		"_postman_id": "98f768ba-7f3f-4796-a6e9-7612efd4b791",
+		"name": "SecureNode User Management Platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "29548787"
+	},
+	"item": [
+		{
+			"name": "Display all users",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Ahmed\",\r\n    \"password\": \"@154\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5000/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Success_Login_trial",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TA.Raghda\",\r\n    \"password\": \"MSAraghda12\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5000/users/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Failed_Login_trial",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TA.Raghda\",\r\n    \"password\": \"MSAraghda11\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5000/users/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Get_A_Single_User_By_Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "http://localhost:5000/users/65a5b69abcbdb536495cd3b5"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete_A_User_By_Id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:5000/users/65f629f3b5402595aef4e95b"
+			},
+			"response": []
+		},
+		{
+			"name": "Update_A_User_By_Id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Ahmed Ghonem\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5000/users/65aa8aa9ce494cc15c252216"
+			},
+			"response": []
+		},
+		{
+			"name": "Register (Create_New_User)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"TA.Ahmed Mostafa\",\r\n    \"email\": \"amostafa8@msa.edn.eg\",\r\n    \"password\": \"ahmed2024\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:5000/register"
+			},
+			"response": []
+		}
+	]
+}
