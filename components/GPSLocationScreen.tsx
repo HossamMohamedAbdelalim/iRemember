@@ -1,18 +1,25 @@
+// components/GPSLocationScreen.js
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, TouchableOpacity, Text, Share } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Share,
+  Alert,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import MapViewDirections from "react-native-maps-directions";
 import { GOOGLE_API_KEY } from "../environments";
-import Icon from "react-native-vector-icons/FontAwesome"; // Import the icon library you choose
+import Icon from "react-native-vector-icons/FontAwesome";
+import axios from "axios";
 
-export default function LocationScreen() {
+export default function GPSLocationScreen() {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [destination, setDestination] = useState(null);
-  const [showSetDestinationButton, setShowSetDestinationButton] =
-    useState(false);
 
   useEffect(() => {
     const fetchLocation = async () => {
@@ -24,47 +31,61 @@ export default function LocationScreen() {
 
       let currentLocation = await Location.getCurrentPositionAsync({});
       setLocation(currentLocation);
+
+      // Start sending location updates
+      const locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 10000,
+          distanceInterval: 0,
+        },
+        (newLocation) => {
+          setLocation(newLocation);
+          sendLocationToServer(newLocation);
+        }
+      );
+
+      return () => locationSubscription.remove();
     };
 
     fetchLocation();
   }, []);
 
-  const handleAddMarker = (coordinate, title = "") => {
-    setMarkers([
-      ...markers,
-      { coordinate, title, key: markers.length, deleted: false },
-    ]);
-    setShowSetDestinationButton(true);
-  };
-
-  const handleDeleteMarker = (markerIndex) => {
-    const updatedMarkers = [...markers];
-    updatedMarkers[markerIndex].deleted = true;
-    setMarkers(updatedMarkers);
-  };
-
-  const handleDeleteDestination = () => {
-    setDestination(null);
-    setShowSetDestinationButton(false);
-  };
-
-  const handleShareLocation = () => {
-    if (location) {
-      const shareUrl = `https://www.google.com/maps/search/?api=1&query=${location.coords.latitude},${location.coords.longitude}`;
-      Share.share({
-        title: "My Location",
-        message: `Check out my location: ${shareUrl}`,
-        url: shareUrl,
+  const sendLocationToServer = async (location) => {
+    try {
+      await axios.post("http://localhost:3000/update-location", {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
       });
+    } catch (error) {
+      console.error("Error updating location:", error);
     }
   };
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
+  const handleAddMarker = (coordinate) => {
+    setMarkers([...markers, { coordinate, key: markers.length }]);
+    setDestination(coordinate);
+  };
+
+  const handleDeleteMarker = (markerIndex) => {
+    const updatedMarkers = markers.filter((_, index) => index !== markerIndex);
+    setMarkers(updatedMarkers);
+    setDestination(null);
+  };
+
+  const handleShareLocation = () => {
+    const shareUrl = `http://localhost:3000/live-location`; // Replace with your local server URL
+    Share.share({
+      title: "My Live Location",
+      message: `Check out my live location: ${shareUrl}`,
+      url: shareUrl,
+    });
+  };
+
+  const handleDestinationReached = () => {
+    Alert.alert("Destination Reached", "You have reached your destination!");
+    setDestination(null);
+  };
 
   return (
     <View style={styles.container}>
@@ -79,7 +100,7 @@ export default function LocationScreen() {
           }}
           onPress={(e) => {
             if (!destination) {
-              handleAddMarker(e.nativeEvent.coordinate, "Destination");
+              handleAddMarker(e.nativeEvent.coordinate);
             }
           }}
         >
@@ -89,21 +110,15 @@ export default function LocationScreen() {
               longitude: location.coords.longitude,
             }}
             title="You are here!"
+            pinColor="blue"
           />
           {markers.map((marker, index) => (
-            <View key={index}>
-              {marker.deleted ? null : (
-                <Marker coordinate={marker.coordinate} title={marker.title} />
-              )}
-              {marker.deleted ? null : (
-                <TouchableOpacity
-                  onPress={() => handleDeleteMarker(index)}
-                  style={styles.deleteButton}
-                >
-                  <Text style={styles.deleteButtonText}>Delete</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            <Marker
+              key={index}
+              coordinate={marker.coordinate}
+              title={`Marker ${index + 1}`}
+              pinColor="red"
+            />
           ))}
           {destination && (
             <MapViewDirections
@@ -116,8 +131,9 @@ export default function LocationScreen() {
                 longitude: destination.longitude,
               }}
               apikey={GOOGLE_API_KEY}
-              strokeWidth={3}
+              strokeWidth={4}
               strokeColor="hotpink"
+              onReady={() => handleDestinationReached()}
             />
           )}
         </MapView>
@@ -128,16 +144,19 @@ export default function LocationScreen() {
           style={styles.iconButton}
         >
           <Icon name="share" size={30} color="white" />
+          <Text style={styles.iconButtonText}>Share</Text>
         </TouchableOpacity>
         {destination && (
           <TouchableOpacity
-            onPress={handleDeleteDestination}
+            onPress={() => handleDeleteMarker(markers.length - 1)}
             style={styles.iconButton}
           >
             <Icon name="trash" size={30} color="white" />
+            <Text style={styles.iconButtonText}>Delete</Text>
           </TouchableOpacity>
         )}
       </View>
+      {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
     </View>
   );
 }
@@ -153,20 +172,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+    backgroundColor: "#fff",
   },
   iconButton: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#399cbd",
     padding: 10,
     borderRadius: 10,
   },
-  deleteButton: {
-    backgroundColor: "red",
-    padding: 5,
-    borderRadius: 5,
-    marginTop: 5,
-  },
-  deleteButtonText: {
+  iconButtonText: {
     color: "white",
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  errorText: {
+    color: "red",
     textAlign: "center",
+    marginTop: 10,
   },
 });

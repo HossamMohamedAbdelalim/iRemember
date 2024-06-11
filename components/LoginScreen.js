@@ -137,7 +137,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.1.103:7777/users/login",
+        "http://192.168.78.105:7777/users/login",
         {
           name: email, // Ensure this matches the server's expected field
           password,

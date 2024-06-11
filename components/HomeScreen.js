@@ -1,27 +1,28 @@
+// components/HomeScreen.js
 import React from "react";
-import { View, TouchableOpacity, Text, Image, StyleSheet } from "react-native"; // Import Image component
+import { View, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Image
-        source={require("../assets/icon.png")} // Specify the path to your PNG image
-        style={styles.image}
-      />
+      <Image source={require("../assets/icon.png")} style={styles.image} />
       <Text style={styles.headerText}>
         Hi, I am iRemember. I am designed to support you with your dementia and
-        will do my best assisst you to be self-dependent.
+        will do my best to assist you in being self-dependent.
       </Text>
 
       <View style={styles.row}>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate("iRememberBot")}
+          onPress={() => navigation.navigate("Chat")}
         >
           <Text style={styles.buttonText}>Ask Me!</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("ProfileOverview")}
+        >
           <Text style={styles.buttonText}>Who's That?</Text>
         </TouchableOpacity>
       </View>
@@ -34,8 +35,11 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Where am I?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>My Medications</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("MedicationReminder")}
+        >
+          <Text style={styles.buttonText}>Medication Reminder</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -47,30 +51,47 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20, // Add padding to center the text and buttons
+    paddingHorizontal: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
   },
   headerText: {
     textAlign: "center",
-    marginBottom: 20,
-    fontSize: 16,
-    color: "#666", // You can adjust the color as needed
+    marginBottom: 30,
+    fontSize: 18,
+    color: "#333",
+    fontWeight: "bold",
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 20,
+    width: "100%",
   },
   button: {
-    backgroundColor: "#2196F3",
+    backgroundColor: "#4CAF50",
     padding: 15,
     borderRadius: 10,
-    width: "45%", // Adjust as needed
+    width: "45%",
     alignItems: "center",
-    marginHorizontal: 10, // Adjust spacing between buttons as needed
+    marginHorizontal: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
