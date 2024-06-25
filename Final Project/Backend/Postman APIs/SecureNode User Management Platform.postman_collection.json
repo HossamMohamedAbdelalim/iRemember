@@ -24,13 +24,14 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/users",
+					"raw": "http://localhost:5000/api/users",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "5000",
 					"path": [
+						"api",
 						"users"
 					]
 				}
@@ -121,7 +122,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/users/6679cacb31f5d853f4f5f330",
+					"raw": "http://localhost:5000/users/667a0214eac09a4af83ba96d",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -129,7 +130,7 @@
 					"port": "5000",
 					"path": [
 						"users",
-						"6679cacb31f5d853f4f5f330"
+						"667a0214eac09a4af83ba96d"
 					]
 				}
 			},
@@ -187,6 +188,53 @@
 					"port": "5000",
 					"path": [
 						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add_User_Photo_In_Profile_Setup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "firstName",
+							"value": "Marwa",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "Soliman",
+							"type": "text"
+						},
+						{
+							"key": "photo",
+							"type": "file",
+							"src": "/C:/Users/ahmed/Desktop/Ghonem.jpg"
+						},
+						{
+							"key": "birthday",
+							"value": "1989-01-01",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/667a1c04c408abeac6594d19/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"667a1c04c408abeac6594d19",
+						"profile"
 					]
 				}
 			},
